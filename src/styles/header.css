@@ -1,0 +1,19 @@
+.header {
+  background-color: #FFC727;
+  width: 99%;
+  padding: 10px;
+  border-radius: 15px;
+
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.sidebar-btn {
+  padding: 12px;
+  cursor: pointer;
+  border: none;
+  border-radius: 50%;
+  width: 5%;
+  border: solid 1px  rgb(0, 0, 0);
+}

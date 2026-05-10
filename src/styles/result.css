@@ -1,0 +1,44 @@
+.result-table {
+  width: 90%;
+  margin: 20px auto;
+  background: rgb(236, 136, 136);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* header + rows layout */
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr 1fr;
+  padding: 14px;
+  text-align: center;
+  align-items: center;
+}
+
+/* header */
+.table-header {
+  background: #5f5949;
+  font-weight: bold;
+}
+
+/* rows */
+.table-row {
+  background: rgb(251, 255, 145);
+  border-bottom: 1px solid #eee;
+}
+
+.table-row:nth-child(even) {
+  background: #fafafa;
+}
+
+/* hover effect (this makes it feel “real”) */
+.table-row:hover {
+  background: #fff7d1;
+}
+
+/* last row clean */
+.table-row:last-child {
+  border-bottom: none;
+}

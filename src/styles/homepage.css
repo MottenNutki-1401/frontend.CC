@@ -1,0 +1,76 @@
+.home-cont {
+   display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  background-color: #ffffff;
+  padding: 50px;
+  width: 300px;
+  border-radius: 10px;
+  height: 300px;
+
+  margin-top: 50px;     /* top space */
+  margin-bottom: 50px;  /* bottom space */
+  margin-left: 15%;     /* pushes it right */
+  border: solid 1px #000000;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.406);
+
+}
+
+.heelo{
+    background: rgb(255, 255, 0);
+     padding: 15px;
+       height: 30px;
+}
+.btnss {
+  display: flex;
+  flex-direction: column; /* stacked vertically */
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.btn1,
+.btn2,
+.btn3,
+.btn4 {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background-color: #ffc727;
+  color: black;
+  cursor: pointer;
+  font-size: 15px;
+  width: 300px; 
+}
+
+.btn1:hover,
+.btn2:hover,
+.btn3:hover,
+.btn4:hover {
+  opacity: 0.9;
+}
+
+
+.egg2 {
+  position: absolute;
+  bottom: -40px;
+  left: -40px;
+
+  width: 50%; 
+  height: 50%; 
+z-index: -1; 
+
+  transform: rotate(180deg);
+}
+
+.learn {
+  position: absolute; 
+
+  top: -120px;
+  right: -50%;  
+
+  width: 170%;
+  height: 140%;
+  z-index: -1;
+}

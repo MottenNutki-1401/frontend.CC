@@ -1,0 +1,61 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -290px; /* hidden first */
+  width: 250px;
+  height: 100vh;
+  background-color: rgb(255, 255, 255);
+  padding: 20px;
+  transition: left 0.3s ease;
+  position: fixed;
+  z-index: 10;
+   border: solid 1px rgb(0, 0, 0); 
+}
+
+.sidebar.open {
+  left: 0; /* shows sidebar */
+}
+
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.closed-btn {
+  margin-bottom: 20px;
+  padding: 10px;
+  width: 25%;
+  cursor: pointer; 
+  color: #000000;
+  background-color: #ee8de8;
+  border-radius: 10px;
+   margin-top: 20px;
+}
+
+.file-btn,
+.spel-btn,
+.gram-btn,
+.rep-btn,
+.logout-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+
+  background-color: #FFC727;
+  color: #000;
+  text-align: center;
+}
+
+.logout-sidebar {
+  width: 90%;
+  padding: 10px;
+  position: absolute;
+  bottom: 50px;
+  left: 0;
+  margin: 15px 0; 
+}
