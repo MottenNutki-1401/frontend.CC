@@ -2,8 +2,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/grammar.css";
 
 import egg from "../assets/egg.svg";
-import Header from "./header.jsx";
-import Sidebar from "./sidebar.jsx";
+import Header from "../header.jsx";
+import Sidebar from "../sidebar.jsx";
 import { useState } from "react";
 
 import { exportGrammarPDF } from "../utils/exportGrammar";
