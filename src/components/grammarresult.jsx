@@ -2,9 +2,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/grammar.css";
 
 import egg from "../assets/egg.svg";
-import Header from "./header.jsx";
-import Sidebar from "./sidebar.jsx";
+import Header from "../components/header.jsx";
+import Sidebar from "../components/sidebar.jsx";
 import { useState } from "react";
+
+import { exportGrammarPDF } from "../utils/exportGrammar";
 
 function GrammarResult() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -37,6 +39,12 @@ function GrammarResult() {
 
         {/* LEFT TABLE */}
         <div className="table-wrapper2">
+                      <button
+                          className="dl-but"
+                          onClick={() => exportGrammarPDF(resultData.files)}
+                        >
+                          download
+                        </button>
           <div className="result-table2">
 
             <div className="table-header2">
@@ -67,7 +75,7 @@ function GrammarResult() {
         <div className="mistake-panel2">
           <div className="nekobox1">
             <h2>Grammatical Mistakes</h2>
-            <button className="dl-but">download</button>
+            
           </div>
 
           <div className="mistake-box2">
