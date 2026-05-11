@@ -1,115 +1,133 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-
+import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/spelling.css";
-import Header from "../components/header.jsx";
-import Sidebar from "../components/sidebar.jsx";
-
-import { handleDrop, handleDragOver, handleFileChange } from "../components/dragdrop"; 
-import { uploadFiles, getSpelling } from "../api/api"; // 
 
 import egg from "../assets/egg.svg";
-import book2 from "../assets/book2.png";
+import Header from "./header.jsx";
+import Sidebar from "./sidebar.jsx";
+import { useState } from "react";
 
-function Spelling() {
+
+import { exportSpellingPDF } from "../utils/exportSpelling";
+
+function SpellingResult() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [files, setFiles] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const location = useLocation();
   const navigate = useNavigate();
 
-  // FIXED HANDLE UPLOAD
-  const handleUpload = async () => {
-    if (files.length === 0) {
-      alert("Please select files first!");
-      return;
-    }
+  const resultData = location.state;
 
-    const formData = new FormData();
+  if (!resultData || !resultData.files) {
+    return (
+      <div>
+        <h2>No results found</h2>
+        <button onClick={() => navigate("/spelling")}>Go Back</button>
+      </div>
+    );
+  }
 
-    for (let i = 0; i < files.length; i++) {
-      formData.append("files", files[i]);
-    }
-
-    try {
-      // STEP 1: upload files
-      const uploadData = await uploadFiles(formData);
-      console.log("UPLOAD:", uploadData);
-
-      // STEP 2: spelling analysis
-      const spellData = await getSpelling(uploadData);
-      console.log("SPELL DATA:", spellData);
-
-      // STEP 3: navigate with correct data
-      navigate("/SpellingResult", {
-        state: {
-          files: spellData.results //IMPORTANT
-        }
-      });
-
-    } catch (error) {
-      console.error("Spelling error:", error);
-      alert("Something went wrong!");
-    }
-  };
-
-  const handleCancel = () => {
-    setFiles([]);
+  //Normalize function (important for matching)
+  const normalize = (word) => {
+    return word.toLowerCase().replace(/[^a-z']/gi, "");
   };
 
   return (
-    <div className="homepage-container">
-      <Header toggleSidebar={() => setIsSidebarOpen(true)} />
+    <div className="file-container1">
 
+      <Header toggleSidebar={() => setIsSidebarOpen(true)} />
       <Sidebar
         isOpen={isSidebarOpen}
         closeSidebar={() => setIsSidebarOpen(false)}
       />
 
-      <div className="file-container">
-        <div className="upload-box">
-          <h1 className="meow">Spelling checker</h1>
-          <h2 className="title">Upload Student Submissions</h2>
+      <div className="result-layout1">
 
-          <div
-            className="drop-area"
-            onDrop={(e) => handleDrop(e, setFiles)}
-            onDragOver={handleDragOver}
-          >
-            <p>Drop files here or click to choose files</p>
+        {/* LEFT TABLE */}
+        <div className="table-wrapper1">
+          <div className="result-table1">
 
-            <input
-              type="file"
-              multiple
-              onChange={(e) => handleFileChange(e, setFiles)}
-              className="file-input"
-            />
+             <button
+              className="dl-but"
+              onClick={() => exportSpellingPDF(resultData.files)}
+                  >
+                    download
+                  </button>
+
+            <div className="table-header1">
+              <span>File Name</span>
+              <span>Spelling Mistake</span>
+              <span>Total Words</span>
+              <span>Spelling Score</span>
+            </div>
+
+            {resultData.files.map((file, index) => (
+              <div
+                className="table-row1"
+                key={index}
+                onClick={() => setSelectedFile(file)}
+                style={{ cursor: "pointer" }}
+              >
+                <span>{file.file}</span>
+                <span>{file.misspelled}</span>
+                <span>{file.total_words}</span>
+                <span>{file.score}%</span>
+              </div>
+            ))}
+
+          </div>
+        </div>
+
+        {/* RIGHT PANEL */}
+        <div className="mistake-panel1">
+
+          <div className="nekobox1">
+            <h2>Spelling Mistakes</h2>
           </div>
 
-          {files.length > 0 && (
-            <div className="file-list">
-              {files.map((file, index) => (
-                <div className="file-item" key={index}>
-                  {file.name}
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="mistake-box1">
+
+            {!selectedFile ? (
+              <p>Select a file to view mistakes</p>
+            ) : (
+              <div style={{ lineHeight: "1.8" }}>
+                {(selectedFile.original_text || "")
+                  .split(/(\s+)/) // keeps spaces + formatting
+                  .map((token, index) => {
+
+                    // If it's just space/newline → render normally
+                    if (/^\s+$/.test(token)) {
+                      return <span key={index}>{token}</span>;
+                    }
+
+                    const clean = normalize(token);
+
+                    const isWrong =
+                      (selectedFile.misspelled_words || []).includes(clean);
+
+                    return (
+                      <span
+                        key={index}
+                        style={{
+                          color: isWrong ? "red" : "black",
+                          textDecoration: isWrong ? "underline" : "none",
+                        }}
+                      >
+                        {token}
+                      </span>
+                    );
+                  })}
+              </div>
+            )}
+
+          </div>
         </div>
 
-        <div className="btns">
-          <button className="compare-btn" onClick={handleUpload}>
-            Check
-          </button>
-
-          <button className="cancel-btn" onClick={handleCancel}>
-            Cancel
-          </button>
-        </div>
-
-        <img className="egg1" src={egg} alt="Egg" />
-        <img className="books" src={book2} alt="books" />
       </div>
+
+      <img className="egg2" src={egg} alt="Egg" />
     </div>
   );
 }
 
-export default Spelling;
+export default SpellingResult;

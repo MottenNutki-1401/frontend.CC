@@ -3,6 +3,8 @@ import { useState } from "react";
 import Header from "../components/header.jsx";
 import Sidebar from "../components/sidebar.jsx";
 
+import { exportGradingPDF } from "../utils/exportGrading";
+
 import {
   handleDrop,
   handleDragOver,
@@ -376,11 +378,12 @@ function Grading() {
 
       </div>
 
-      <button className="dl-but11">
-
-        download
-
-      </button>
+          <button
+          className="dl-but11"
+          onClick={() => exportGradingPDF(results)}
+        >
+          Download
+        </button>
 
     </div>
   );

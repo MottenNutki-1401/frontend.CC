@@ -1,118 +1,146 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-
+import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/grammar.css";
-import Header from "../components/header.jsx";
-import Sidebar from "../components/sidebar.jsx";
-
-import { handleDrop, handleDragOver, handleFileChange } from "../components/dragdrop"; 
-import { uploadFiles, getGrammar } from "../api/api"; //IMPORTANT
 
 import egg from "../assets/egg.svg";
-import book2 from "../assets/book2.png";
+import Header from "./header.jsx";
+import Sidebar from "./sidebar.jsx";
+import { useState } from "react";
 
-function Grammar() {
+import { exportGrammarPDF } from "../utils/exportGrammar";
+
+function GrammarResult() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [files, setFiles] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const location = useLocation();
   const navigate = useNavigate();
 
-  const handleUpload = async () => {
-    if (files.length === 0) {
-      alert("Please select files first!");
-      return;
-    }
+  const resultData = location.state;
 
-    const formData = new FormData();
-
-    for (let i = 0; i < files.length; i++) {
-      formData.append("files", files[i]);
-    }
-
-    try {
-      // upload
-      const uploadData = await uploadFiles(formData);
-      console.log("UPLOAD:", uploadData);
-
-      //  grammar analysis
-      const grammarData = await getGrammar(uploadData);
-      console.log("GRAMMAR:", grammarData);
-
-      
-      navigate("/grammar-result", {
-        state: {
-          files: grammarData.results //IMPORTANT
-        }
-      });
-
-    } catch (error) {
-      console.error("Grammar error:", error);
-      alert("Something went wrong!");
-    }
-  };
-
-  const handleCancel = () => {
-    setFiles([]);
-  };
+  if (!resultData || !resultData.files) {
+    return (
+      <div>
+        <h2>No results found</h2>
+        <button onClick={() => navigate("/grammar")}>Go Back</button>
+      </div>
+    );
+  }
 
   return (
-    <div className="homepage-container">
-      <Header toggleSidebar={() => setIsSidebarOpen(true)} />
+    <div className="file-container2">
 
+      <Header toggleSidebar={() => setIsSidebarOpen(true)} />
       <Sidebar
         isOpen={isSidebarOpen}
         closeSidebar={() => setIsSidebarOpen(false)}
       />
 
-      <div className="file-container">
-        <div className="upload-box">
-          <h1 className="Title">Grammar checker</h1>
+      <div className="result-layout2">
 
-          {/* DROP AREA */}
-          {files.length === 0 && (
-            <div
-              className="drop-area"
-              onDrop={(e) => handleDrop(e, setFiles)}
-              onDragOver={handleDragOver}
-            >
-              <p>Drop files here or click to choose files</p>
+        {/* LEFT TABLE */}
+        <div className="table-wrapper2">
+                      <button
+                          className="dl-but"
+                          onClick={() => exportGrammarPDF(resultData.files)}
+                        >
+                          download
+                        </button>
+          <div className="result-table2">
 
-              <input
-                type="file"
-                multiple
-                onChange={(e) => handleFileChange(e, setFiles)}
-                className="file-input"
-              />
+            <div className="table-header2">
+              <span>File Name</span>
+              <span>Grammatical Mistake</span>
+              <span>Total Words</span>
+              <span>Grammar Score</span>
             </div>
-          )}
 
-          {/* FILE LIST */}
-          {files.length > 0 && (
-            <div className="file-list">
-              {files.map((file, index) => (
-                <div className="file-item" key={index}>
-                  {file.name}
-                </div>
-              ))}
-            </div>
-          )}
+            {resultData.files.map((file, index) => (
+              <div
+                className="table-row1"
+                key={index}
+                onClick={() => setSelectedFile(file)}
+                style={{ cursor: "pointer" }}
+              >
+                <span>{file.file}</span>
+                <span>{file.mistakes}</span>
+                <span>{file.total_words}</span>
+                <span>{file.score}%</span>
+              </div>
+            ))}
+
+          </div>
         </div>
 
-        {/* BUTTONS */}
-        <div className="btns">
-          <button className="compare-btn" onClick={handleUpload}>
-            Check
-          </button>
+        {/* RIGHT PANEL */}
+        <div className="mistake-panel2">
+          <div className="nekobox1">
+            <h2>Grammatical Mistakes</h2>
+            
+          </div>
 
-          <button className="cancel-btn" onClick={handleCancel}>
-            Cancel
-          </button>
+          <div className="mistake-box2">
+
+            {!selectedFile ? (
+              <p>Select a file to view mistakes</p>
+            ) : (
+              <div>
+                {(() => {
+                  const text = selectedFile.original_text || "";
+                  const issues = selectedFile.issues || [];
+
+                  const sorted = [...issues].sort((a, b) => a.offset - b.offset);
+
+                  let elements = [];
+                  let lastIndex = 0;
+
+                  sorted.forEach((issue, i) => {
+                    const start = issue.offset;
+                    const end = start + issue.length;
+
+                    // normal text
+                    elements.push(
+                      <span key={"text-" + i}>
+                        {text.slice(lastIndex, start)}
+                      </span>
+                    );
+
+                    // highlighted error
+                    elements.push(
+                      <span
+                        key={"error-" + i}
+                        style={{
+                          backgroundColor: "rgba(0, 106, 255, 0.26)",
+                          borderBottom: "2px dotted red"
+                        }}
+                        title={issue.message}
+                      >
+                        {text.slice(start, end)}
+                      </span>
+                    );
+
+                    lastIndex = end;
+                  });
+
+                  // remaining text
+                  elements.push(
+                    <span key="last">
+                      {text.slice(lastIndex)}
+                    </span>
+                  );
+
+                  return elements;
+                })()}
+              </div>
+            )}
+
+          </div>
         </div>
 
-        <img className="egg1" src={egg} alt="Egg" />
-        <img className="books" src={book2} alt="books" />
       </div>
+
+      <img className="egg2" src={egg} alt="Egg" />
     </div>
   );
 }
 
-export default Grammar;
+export default GrammarResult;

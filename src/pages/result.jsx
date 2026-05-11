@@ -5,12 +5,18 @@ import Header from "../components/header.jsx";
 import Sidebar from "../components/sidebar.jsx";
 import { useState } from "react";
 
+import egg from "../assets/egg.svg";
+
+import { exportSimilarityPDF } from "../utils/exportSimilarity";
+
+
 function Result() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
   const resultData = location.state;
+  console.log(resultData);
 
   if (!resultData) {
     return (
@@ -33,9 +39,14 @@ function Result() {
             isOpen={isSidebarOpen}
             closeSidebar={() => setIsSidebarOpen(false)} />
 
-      <h2 className="title">Comparison Results</h2>
-
       <div className="result-table">
+                <button
+                    className="dl-but11"
+                    onClick={() => exportSimilarityPDF(resultData.files)}
+                  >
+                      download
+                    </button>
+
         <div className="table-header">
           <span>File Name</span>
           <span>Status</span>
@@ -47,7 +58,7 @@ function Result() {
           <div className="table-row" key={index}>
             <span >{file.file}</span>
 
-            {/* fake status */}
+            {/* status */}
             <span >
               {file.similarity > 70 ? "High Risk" : "Safe"}
             </span>
@@ -58,6 +69,7 @@ function Result() {
           </div>
         ))}
       </div>
+        <img className="egg2" src={egg} alt="Egg" />
     </div>
   );
 }
