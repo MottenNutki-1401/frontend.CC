@@ -6,6 +6,9 @@ import Header from "./header.jsx";
 import Sidebar from "./sidebar.jsx";
 import { useState } from "react";
 
+
+import { exportSpellingPDF } from "../utils/exportSpelling";
+
 function SpellingResult() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -44,6 +47,13 @@ function SpellingResult() {
         <div className="table-wrapper1">
           <div className="result-table1">
 
+             <button
+              className="dl-but"
+              onClick={() => exportSpellingPDF(resultData.files)}
+                  >
+                    download
+                  </button>
+
             <div className="table-header1">
               <span>File Name</span>
               <span>Spelling Mistake</span>
@@ -73,7 +83,6 @@ function SpellingResult() {
 
           <div className="nekobox1">
             <h2>Spelling Mistakes</h2>
-            <button className="dl-but">Download</button>
           </div>
 
           <div className="mistake-box1">
