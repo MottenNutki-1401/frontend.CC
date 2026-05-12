@@ -73,7 +73,7 @@ return (
           onDrop={(e) => handleDrop(e, setFiles)}
           onDragOver={handleDragOver}
         >
-          <p>Drop files here or click to choose files</p>
+          <p>Click to choose what files to upload</p>
 
           <input
             type="file"
@@ -98,9 +98,13 @@ return (
       </div>
 
       <div className="btns">
-        <button className="compare-btn" onClick={handleUpload}>
-          ANALYZE
-        </button>
+            <button
+              className="compare-btn"
+              onClick={handleUpload}
+              disabled={loading}
+            >
+              {loading ? "Analyzing..." : "ANALYZE"}
+            </button>
 
         <button className="cancel-btn" onClick={handleCancel}>
           Cancel

@@ -286,7 +286,7 @@ function Grading() {
               <h1>Files</h1>
 
               <p>
-                Drop files here or click to choose
+                Click to choose what files to upload
               </p>
 
             </div>

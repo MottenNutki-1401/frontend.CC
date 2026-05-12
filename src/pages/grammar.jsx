@@ -74,7 +74,7 @@ function Grammar() {
               onDrop={(e) => handleDrop(e, setFiles)}
               onDragOver={handleDragOver}
             >
-              <p>Drop files here or click to choose files</p>
+              <p>Click to choose what files to upload</p>
 
               <input
                 type="file"

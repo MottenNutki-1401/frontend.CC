@@ -1,5 +1,5 @@
 .header {
-  background-color: #FFC727;
+  background-color: #FFC727;;
   width: 99%;
   padding: 10px;
   border-radius: 15px;
@@ -9,11 +9,19 @@
   gap: 15px;
 }
 
-.sidebar-btn {
-  padding: 12px;
-  cursor: pointer;
-  border: none;
+.sidebar-btns {
+  width: 45px;
+  height: 45px;
+
   border-radius: 50%;
-  width: 5%;
-  border: solid 1px  rgb(0, 0, 0);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  box-sizing: border-box;
+
+  line-height: 1;   /* IMPORTANT FIX */
+  font-size: 18px;  /* control icon size */
 }

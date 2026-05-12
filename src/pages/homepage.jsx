@@ -25,7 +25,7 @@ function Homepage ({ setPage }) {
             closeSidebar={() => setIsSidebarOpen(false)} />
 
   <div className= " home-cont">
-    <h1 className= "heelo">Hello!</h1>
+    <h1 className= "heelo">Hello!Where do we start</h1>
 
   <div className="btnss">
           <button

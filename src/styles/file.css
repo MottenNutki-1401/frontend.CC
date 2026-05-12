@@ -76,25 +76,34 @@
   border: none;
   border-radius: 10px;
   font-weight: bold; 
-  background-color: #1a73e8;
+  background-color: #8bfd57;
 }
+
+
 .cancel-btn {
   width: 100%;
   padding: 12px;
 
-  color: #000;
+  color: #171717;
   font-size: 15px;
   cursor: pointer;
-
+ background-color: #f16549;
   border: none;
   border-radius: 10px;
 }
 .compare-btn:hover {
-  background-color: #66ffb8;
+  background-color: #a5f77f;
+}
+/* DISABLE BUTTON */
+.compare-btn:disabled {
+  opacity: 0.9;
+  background: #02bd3a;
+
+  cursor: not-allowed;
 }
 
 .cancel-btn:hover {
-  background-color: #999;
+  background-color: #ff7878;
 }
 
 .sidebar-btn {

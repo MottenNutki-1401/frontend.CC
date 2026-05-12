@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, Link} from "react-router-dom";
 import { supabase } from "../api/supabase";
 
 import "../styles/login.css";
@@ -26,9 +26,11 @@ function Login() {
       return;
     }
 
-    console.log(data);
+        console.log(data);
 
-    navigate("/home");
+      navigate("/home", {
+      replace: true
+    });
   }
 
   return (
@@ -58,6 +60,10 @@ function Login() {
           <button className="login-btn" type="submit">
             LOGIN
           </button>
+
+          <Link to="/forgot-password">
+            Forgot Password?
+          </Link>
 
           <p className="version">CopyCatch v1.</p>
         </div>
