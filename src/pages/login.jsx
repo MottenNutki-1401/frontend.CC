@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {useNavigate, Link} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "../api/supabase";
 
 import "../styles/login.css";
@@ -26,51 +26,62 @@ function Login() {
       return;
     }
 
-        console.log(data);
+    console.log(data);
 
-      navigate("/home", {
+    navigate("/home", {
       replace: true
     });
   }
 
   return (
     <div className="login-container">
-      <form onSubmit={handleLogin}>
+      <form className="login-page-form" onSubmit={handleLogin}>
         <div className="hugs">
-          <h1 className="helo">Welcome!</h1>
+          <p className="login-product-name">CopyCatch</p>
+          <h1 className="helo">Welcome back</h1>
+          <p className="login-subtitle">
+            Sign in to continue to your academic review workspace.
+          </p>
 
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) =>
-              setEmail(e.target.value)
-            }
-          />
+          <div className="login-field">
+            <label htmlFor="email">Email address</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="you@university.edu"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) =>
-              setPassword(e.target.value)
-            }
-          />
+          <div className="login-field">
+            <div className="login-label-row">
+              <label htmlFor="password">Password</label>
+              <Link to="/forgot-password">Forgot password?</Link>
+            </div>
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
 
           <button className="login-btn" type="submit">
-            LOGIN
+            Sign in
           </button>
-
-          <Link to="/forgot-password">
-            Forgot Password?
-          </Link>
 
           <p className="version">CopyCatch v1.</p>
         </div>
 
-        <img className="egg1" src={egg} alt="Egg" />
-        <img className="egg2" src={egg} alt="Egg" />
-        <img className="learn" src={learn} alt="nerd" />
+        <img className="login-egg-one" src={egg} alt="" aria-hidden="true" />
+        <img className="login-egg-two" src={egg} alt="" aria-hidden="true" />
+        <img
+          className="login-learn-illustration"
+          src={learn}
+          alt="Student learning illustration"
+        />
       </form>
     </div>
   );
