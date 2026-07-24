@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-
 import { useState } from "react";
-import "../styles/homepage.css"
+
+import "../styles/homepage.css";
 import Header from "../components/header.jsx";
 import Sidebar from "../components/sidebar.jsx";
 
@@ -12,50 +12,106 @@ import File from "../components/file.jsx";
 import Spelling from "../pages/spelling.jsx";
 import Grammar from "../pages/grammar.jsx";
 
-function Homepage ({ setPage }) {
-  const [isSidebarOpen,setIsSidebarOpen] = useState(false);
+function Homepage() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
   return (
-
     <div className="homepage-container">
-          <Header toggleSidebar={() => setIsSidebarOpen(true)} />
-            <Sidebar 
-            isOpen={isSidebarOpen}
-            closeSidebar={() => setIsSidebarOpen(false)} />
+      <Header
+        toggleSidebar={() => setIsSidebarOpen(true)}
+        variant="dashboard"
+      />
+      <Sidebar
+        isOpen={isSidebarOpen}
+        closeSidebar={() => setIsSidebarOpen(false)}
+      />
 
-  <div className= " home-cont">
-    <h1 className= "heelo">Hello!Where do we start</h1>
+      <main className="home-dashboard">
+        <section className="home-content" aria-labelledby="home-title">
+          <div className="home-intro">
+            <p className="home-eyebrow">COPYCATCH WORKSPACE</p>
+            <h1 id="home-title">Where would you like to begin?</h1>
+            <p>
+              Select a tool to review submissions, support academic integrity, and
+              give students clearer feedback.
+            </p>
+          </div>
 
-  <div className="btnss">
-          <button
-            className="btn1"
-            type="button"
-          onClick={() => navigate("/file")}>
-            Similarity Detection</button>
-      
-         <button
-            className="btn2"
-            type="button"
-           onClick={() => navigate("/spelling")}>Spelling Checker </button>
+          <div className="feature-grid">
+            <button
+              className="feature-card"
+              type="button"
+              onClick={() => navigate("/file")}
+            >
+              <span className="feature-icon" aria-hidden="true">↔</span>
+              <span className="feature-card-copy">
+                <span className="feature-title">Similarity Detection</span>
+                <span className="feature-description">
+                  Compare submissions and identify overlapping content.
+                </span>
+              </span>
+              <span className="feature-arrow" aria-hidden="true">→</span>
+            </button>
 
-        <button
-            className="btn3"
-            type="button"
-        onClick={() => navigate("/grammar")}>Grammar Checker </button>
-          
-          <button className="btn4"
-            type="button"
-            onClick={() => navigate("/grading")}>Automated Grading</button>
-   
-    </div>
-        <img className="egg2" src={egg} alt="Egg" />
-        <img className="learn" src={learn} alt="nerd" />   
+            <button
+              className="feature-card"
+              type="button"
+              onClick={() => navigate("/spelling")}
+            >
+              <span className="feature-icon" aria-hidden="true">Aa</span>
+              <span className="feature-card-copy">
+                <span className="feature-title">Spelling Checker</span>
+                <span className="feature-description">
+                  Find spelling issues across student submissions.
+                </span>
+              </span>
+              <span className="feature-arrow" aria-hidden="true">→</span>
+            </button>
 
-  </div>
+            <button
+              className="feature-card"
+              type="button"
+              onClick={() => navigate("/grammar")}
+            >
+              <span className="feature-icon" aria-hidden="true">✓</span>
+              <span className="feature-card-copy">
+                <span className="feature-title">Grammar Checker</span>
+                <span className="feature-description">
+                  Highlight grammar issues and improve written clarity.
+                </span>
+              </span>
+              <span className="feature-arrow" aria-hidden="true">→</span>
+            </button>
+
+            <button
+              className="feature-card"
+              type="button"
+              onClick={() => navigate("/grading")}
+            >
+              <span className="feature-icon" aria-hidden="true">%</span>
+              <span className="feature-card-copy">
+                <span className="feature-title">Automated Grading</span>
+                <span className="feature-description">
+                  Assess work consistently with your chosen criteria.
+                </span>
+              </span>
+              <span className="feature-arrow" aria-hidden="true">→</span>
+            </button>
+          </div>
+        </section>
+
+        <aside className="home-artwork" aria-label="Academic review illustration">
+          <img className="home-egg" src={egg} alt="" aria-hidden="true" />
+          <img
+            className="home-learn-illustration"
+            src={learn}
+            alt="Student reviewing academic work"
+          />
+        </aside>
+      </main>
     </div>
   );
 }
 
-
-export default Homepage; 
+export default Homepage;
