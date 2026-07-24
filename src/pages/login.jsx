@@ -24,7 +24,7 @@ function Login() {
     if (error) {
       alert(error.message);
       return;
-    }
+    } //new update
 
     console.log(data);
 
