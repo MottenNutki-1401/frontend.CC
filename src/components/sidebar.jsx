@@ -1,8 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import "../styles/sidebar.css";
 
 import File from "./file.jsx";
+
+import egg from "../assets/egg.svg";
 
 import { supabase }
 from "../api/supabase";
@@ -10,6 +13,37 @@ from "../api/supabase";
 function Sidebar({ isOpen, closeSidebar }) {
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const setUsernameFromUser = (user) => {
+      const email = user?.email;
+
+      if (isMounted) {
+        setUsername(email ? email.split("@")[0] : "");
+      }
+    };
+
+    const getUsername = async () => {
+      const { data } = await supabase.auth.getUser();
+
+      setUsernameFromUser(data.user);
+    };
+
+    getUsername();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => setUsernameFromUser(session?.user),
+    );
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   // LOGOUT
   const handleLogout = async () => {
@@ -21,13 +55,12 @@ function Sidebar({ isOpen, closeSidebar }) {
         });
       };
 
-  {/* for test */}
-  const user = {
-
-    name: "Hello",
-
-    role: "Welcome to Copycatch",
-  };
+  const navigationItems = [
+    { label: "Similarity Detection", path: "/File" },
+    { label: "Grammar Checker", path: "/grammar" },
+    { label: "Spelling Checker", path: "/spelling" },
+    { label: "Automated Grading", path: "/grading" },
+  ];
 
   return (
 
@@ -46,61 +79,28 @@ function Sidebar({ isOpen, closeSidebar }) {
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
 
         <div className="sidebar-header">
-
-          {/* PROFILE SECTION */}
-          <div className="sidebar-profile">
-
-            <div className="avatar-circle">
-
-              {user.name.charAt(0)}
-
-            </div>
-
-            <div className="profile-info">
-
-              <p className="profile-name">
-                {user.name}
-              </p>
-
-              <p className="profile-role">
-                {user.role}
-              </p>
-
-            </div>
-
+          <div className="sidebar-brand">
+            <img className="sidebar-brand-egg" src={egg} alt="" aria-hidden="true" />
+            <span>CopyCatch</span>
           </div>
 
+          <div className="sidebar-user" aria-label="Signed-in user">
+            <span className="sidebar-user-label">Signed in as</span>
+            <span className="sidebar-username">{username}</span>
+          </div>
         </div>
 
         <div className="sidebar-nav">
 
-          <button
-            className="file-btn"
-            onClick={() => navigate("/File")}
-          >
-            Similarity Detection
-          </button>
-
-          <button
-            className="spel-btn"
-            onClick={() => navigate("/spelling")}
-          >
-            Spelling Checker
-          </button>
-
-          <button
-            className="gram-btn"
-            onClick={() => navigate("/grammar")}
-          >
-            Grammar Checker
-          </button>
-
-          <button
-            className="rep-btn"
-            onClick={() => navigate("/grading")}
-          >
-            Automated Grading
-          </button>
+          {navigationItems.map(({ label, path }) => (
+            <button
+              className={`sidebar-nav-item ${location.pathname === path ? "active" : ""}`}
+              key={path}
+              onClick={() => navigate(path)}
+            >
+              {label}
+            </button>
+          ))}
 
         </div>
 
