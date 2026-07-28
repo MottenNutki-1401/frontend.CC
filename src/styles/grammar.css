@@ -1,4 +1,6 @@
-/* MAIN LAYOUT */
+@import "./results-dashboard.css";
+
+/* Legacy result styles retained below for backwards-compatible class coverage. */
 
 .result-layout2 {
   display: flex;

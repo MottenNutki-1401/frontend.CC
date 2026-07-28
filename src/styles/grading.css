@@ -1,7 +1,9 @@
 @import "./analysis-upload.css";
+@import "./results-dashboard.css";
 
 .grading-content { width: min(100%, 1220px); margin: 0 auto; }
 .grading-layout { display: grid; grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.35fr); gap: 24px; align-items: start; }
+.grading-layout > .results-dashboard { min-width: 0; }
 .grading-controls { display: grid; gap: 20px; }
 .grading-card { padding: 25px; }
 .grading-card-heading { margin-bottom: 20px; }

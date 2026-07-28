@@ -5,6 +5,7 @@ import Sidebar from "../components/sidebar.jsx";
 import { exportGradingPDF } from "../utils/exportGrading";
 import { handleDrop, handleDragOver, handleFileChange } from "../components/dragdrop";
 import { uploadFiles, getGrades } from "../api/api";
+import ResultsDashboard, { ScoreMeter } from "../components/ResultsDashboard.jsx";
 import "../styles/grading.css";
 
 function Grading() {
@@ -31,6 +32,9 @@ function Grading() {
   };
 
   const total = Object.values(weights).reduce((a, b) => a + b, 0);
+  const averageGrade = results.length ? Math.round(results.reduce((sum, result) => sum + (Number(result.final_score) || 0), 0) / results.length) : 0;
+  const highestGrade = results.length ? Math.max(...results.map((result) => Number(result.final_score) || 0)) : 0;
+  const getGradeTone = (value) => (value >= 85 ? "success" : value >= 60 ? "warning" : "danger");
 
   const handleAnalyze = async () => {
     if (files.length === 0) {
@@ -134,29 +138,34 @@ function Grading() {
               </section>
             </div>
 
-            <section className="grading-results-card" aria-labelledby="grading-results-title">
-              <div className="grading-results-heading">
-                <div>
-                  <p className="grading-results-eyebrow">RESULTS</p>
-                  <h2 id="grading-results-title">Grading results</h2>
-                </div>
-                <button className="grading-download-button" onClick={() => exportGradingPDF(results)}>Download</button>
-              </div>
-
-              <div className="grading-table-scroll">
-                <div className="grading-result-table">
-                  <div className="grading-table-header">
-                    <span>File name</span><span>Grammar</span><span>Spelling</span><span>Originality</span><span>Total words</span><span>Final grade</span>
-                  </div>
-                  {results.map((r, i) => (
-                    <div className="grading-table-row" key={i}>
-                      <span>{r.file}</span><span>{r.grammar}%</span><span>{r.spelling}%</span><span>{r.originality}%</span><span>{r.total_words}</span><span>{r.final_score}%</span>
+            <ResultsDashboard
+              compact
+              eyebrow="GRADING REPORT"
+              title="Grading results"
+              description="Review the completed submission scores and download the report."
+              onDownload={() => exportGradingPDF(results)}
+              summaryCards={[
+                { label: "Submissions graded", value: results.length, detail: "Completed in this report" },
+                { label: "Average final grade", value: `${averageGrade}%`, detail: "Across all submissions", tone: getGradeTone(averageGrade) },
+                { label: "Highest final grade", value: `${highestGrade}%`, detail: "Best submission score", tone: getGradeTone(highestGrade) },
+              ]}
+            >
+              <section className="results-table-card">
+                <div className="results-table-scroll">
+                  <div className="results-data-table" style={{ "--results-columns": "1.55fr repeat(5, minmax(82px, 1fr))" }}>
+                    <div className="results-table-header">
+                      <span>File name</span><span>Grammar</span><span>Spelling</span><span>Originality</span><span>Total words</span><span>Final grade</span>
                     </div>
-                  ))}
-                  {results.length === 0 && <p className="grading-empty-state">Your completed grades will appear here.</p>}
+                    {results.map((r, i) => (
+                      <div className="results-table-row" key={i}>
+                        <span>{r.file}</span><span><ScoreMeter value={r.grammar} /></span><span><ScoreMeter value={r.spelling} /></span><span><ScoreMeter value={r.originality} /></span><span>{r.total_words}</span><span><ScoreMeter value={r.final_score} /></span>
+                      </div>
+                    ))}
+                    {results.length === 0 && <p className="results-empty-state">Your completed grades will appear here.</p>}
+                  </div>
                 </div>
-              </div>
-            </section>
+              </section>
+            </ResultsDashboard>
           </div>
         </section>
       </main>
