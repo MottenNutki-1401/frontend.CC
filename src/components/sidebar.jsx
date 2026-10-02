@@ -15,6 +15,7 @@ function Sidebar({ isOpen, closeSidebar }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [username, setUsername] = useState("");
+  const [isLogoutConfirmationOpen, setIsLogoutConfirmationOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -54,6 +55,11 @@ function Sidebar({ isOpen, closeSidebar }) {
           replace: true
         });
       };
+
+  const confirmLogout = async () => {
+    setIsLogoutConfirmationOpen(false);
+    await handleLogout();
+  };
 
   const navigationItems = [
     { label: "Similarity Detection", path: "/File" },
@@ -108,7 +114,7 @@ function Sidebar({ isOpen, closeSidebar }) {
 
           <button
             className="logout-btn"
-            onClick={handleLogout}
+            onClick={() => setIsLogoutConfirmationOpen(true)}
           >
             Logout
           </button>
@@ -116,6 +122,40 @@ function Sidebar({ isOpen, closeSidebar }) {
         </div>
 
       </div>
+
+      {isLogoutConfirmationOpen && (
+        <div
+          className="logout-confirmation-backdrop"
+          onClick={() => setIsLogoutConfirmationOpen(false)}
+        >
+          <section
+            className="logout-confirmation-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="logout-confirmation-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 id="logout-confirmation-title">Confirm logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <div className="logout-confirmation-actions">
+              <button
+                className="logout-confirmation-cancel"
+                type="button"
+                onClick={() => setIsLogoutConfirmationOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="logout-confirmation-accept"
+                type="button"
+                onClick={confirmLogout}
+              >
+                Log out
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
 
     </>
   );
