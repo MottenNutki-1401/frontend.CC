@@ -1,7 +1,7 @@
 .homepage-container {
   width: 100%;
   min-height: 100vh;
-  overflow: hidden;
+  overflow-x: clip;
   background: #ffffff;
   color: #1d1d1d;
   font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
