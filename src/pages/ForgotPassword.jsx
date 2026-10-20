@@ -8,6 +8,7 @@ import { supabase }
 from "../api/supabase";
 
 import "../styles/login.css";
+import "../styles/passwordRecovery.css";
 
 import egg from "../assets/egg.svg";
 
@@ -26,7 +27,7 @@ function ForgotPassword() {
         email,
         {
           redirectTo:
-            "http://localhost:5173/reset-password",
+            `${window.location.origin}/reset-password`,
         }
       );
 
@@ -42,17 +43,18 @@ function ForgotPassword() {
 
   return (
 
-    <div className="login-container">
+    <div className="password-recovery-page">
 
-      <form onSubmit={handleReset}>
+      <form className="password-recovery-form" onSubmit={handleReset}>
 
-        <div className="hugs">
+        <div className="password-recovery-card">
 
-          <h2 className="helo">
+          <h2 className="password-recovery-heading">
             Forgot Password
           </h2>
 
           <input
+            className="password-recovery-input"
             type="email"
             placeholder="Enter Email"
             value={email}
@@ -62,36 +64,36 @@ function ForgotPassword() {
           />
 
           <button
-            className="login-btn"
+            className="password-recovery-button"
             type="submit"
           >
             SEND RESET LINK
           </button>
 
-          <Link to="/">
+          <Link className="password-recovery-link" to="/">
             Back to Login
           </Link>
 
-          <p className="version">
+          <p className="password-recovery-footer">
             CopyCatch v1.
           </p>
 
         </div>
 
         <img
-          className="egg1"
+          className="password-recovery-egg-one"
           src={egg}
           alt="Egg"
         />
 
         <img
-          className="egg2"
+          className="password-recovery-egg-two"
           src={egg}
           alt="Egg"
         />
 
         <img
-          className="learn"
+          className="password-recovery-illustration"
           src={learn}
           alt="nerd"
         />

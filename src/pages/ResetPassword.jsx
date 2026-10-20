@@ -9,6 +9,7 @@ import { supabase }
 from "../api/supabase";
 
 import "../styles/login.css";
+import "../styles/passwordRecovery.css";
 
 import egg from "../assets/egg.svg";
 
@@ -46,17 +47,18 @@ function ResetPassword() {
 
   return (
 
-    <div className="login-container">
+    <div className="password-recovery-page">
 
-      <form onSubmit={handleUpdatePassword}>
+      <form className="password-recovery-form" onSubmit={handleUpdatePassword}>
 
-        <div className="hugs">
+        <div className="password-recovery-card">
 
-          <h2 className="helo">
+          <h2 className="password-recovery-heading">
             Reset Password
           </h2>
 
           <input
+            className="password-recovery-input"
             type="password"
             placeholder="New Password"
             value={password}
@@ -66,36 +68,36 @@ function ResetPassword() {
           />
 
           <button
-            className="login-btn"
+            className="password-recovery-button"
             type="submit"
           >
             UPDATE PASSWORD
           </button>
 
-          <Link to="/">
+          <Link className="password-recovery-link" to="/">
             Back to Login
           </Link>
 
-          <p className="version">
+          <p className="password-recovery-footer">
             CopyCatch v1.
           </p>
 
         </div>
 
         <img
-          className="egg1"
+          className="password-recovery-egg-one"
           src={egg}
           alt="Egg"
         />
 
         <img
-          className="egg2"
+          className="password-recovery-egg-two"
           src={egg}
           alt="Egg"
         />
 
         <img
-          className="learn"
+          className="password-recovery-illustration"
           src={learn}
           alt="nerd"
         />
