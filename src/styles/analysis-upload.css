@@ -122,7 +122,13 @@
 }
 
 .analysis-file-list,
-.grading-file-list { display: grid; gap: 12px; }
+.grading-file-list {
+  display: grid;
+  max-height: min(40vh, 320px);
+  gap: 12px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
 
 .analysis-file-card,
 .grading-file-card {

@@ -317,7 +317,10 @@ z-index: -1;
 
 .grammar-file-list {
   display: grid;
+  max-height: min(40vh, 320px);
   gap: 12px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .grammar-file-card {
