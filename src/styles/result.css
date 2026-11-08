@@ -1,1 +1,29 @@
 @import "./results-dashboard.css";
+
+.comparison-file-link { padding: 0; border: 0; background: none; color: #765700; cursor: pointer; font: inherit; font-weight: 700; text-align: left; text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.comparison-file-link:hover { color: #3f3000; }
+.comparison-file-link:focus-visible,
+.comparison-close:focus-visible,
+.comparison-navigation button:focus-visible { outline: 3px solid rgba(255, 199, 39, 0.5); outline-offset: 2px; }
+.comparison-viewer { margin-top: 22px; overflow: hidden; border: 1px solid #ece7da; border-radius: 16px; background: #fff; box-shadow: 0 14px 32px rgba(53, 42, 15, 0.1); }
+.comparison-viewer-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 19px 22px; background: #fff8df; border-bottom: 1px solid #ece7da; }
+.comparison-viewer-heading p { margin: 0 0 6px; color: #8c6500; font-size: .68rem; font-weight: 800; letter-spacing: .12em; }
+.comparison-viewer-heading h2 { margin: 0; color: #2c2c2c; font-size: 1.05rem; overflow-wrap: anywhere; }
+.comparison-viewer-heading h2 span { color: #888; font-weight: 450; }
+.comparison-close,
+.comparison-navigation button { min-height: 38px; padding: 8px 12px; border: 1px solid #ddd5bd; border-radius: 8px; background: #fff; color: #514315; cursor: pointer; font: inherit; font-size: .83rem; font-weight: 700; }
+.comparison-navigation { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 22px; border-bottom: 1px solid #f0ede4; color: #565656; font-size: .86rem; font-weight: 700; }
+.comparison-navigation > div { display: flex; gap: 8px; }
+.comparison-navigation button:disabled { cursor: not-allowed; opacity: .45; }
+.comparison-legend { display: flex; flex-wrap: wrap; gap: 9px; margin: 16px 20px 0; font-size: .76rem; }
+.comparison-highlight { padding: 0 .1em; border-radius: 3px; white-space: pre-wrap; }
+.comparison-highlight--exact { background: #c9efd5; color: #174f2d; }
+.comparison-highlight--near_exact { background: #ffedaa; color: #634900; }
+.comparison-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 16px 20px 20px; }
+.comparison-columns article { min-width: 0; overflow: hidden; border: 1px solid #ece7da; border-radius: 11px; background: #fff; }
+.comparison-columns h3 { margin: 0; padding: 12px 14px; border-bottom: 1px solid #ece7da; background: #faf9f5; color: #353535; font-size: .85rem; overflow-wrap: anywhere; }
+.comparison-document-text { min-height: 170px; max-height: 390px; overflow: auto; margin: 0; padding: 16px; color: #414141; font: inherit; font-size: .88rem; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; }
+.comparison-document-text pre { margin: 0 0 12px; font: inherit; white-space: pre-wrap; }
+.comparison-document-text small { display: block; margin-top: 12px; color: #777; font-size: .75rem; line-height: 1.4; }
+.comparison-no-matches { margin: 0; padding: 28px 22px; color: #6f6f6f; text-align: center; }
+@media (max-width: 700px) { .comparison-columns { grid-template-columns: 1fr; } .comparison-viewer-heading { padding: 16px; } .comparison-navigation { align-items: flex-start; flex-direction: column; padding: 12px 16px; } .comparison-columns { padding: 12px; } }
