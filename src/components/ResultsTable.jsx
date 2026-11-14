@@ -1,34 +1,40 @@
-function ResultsTable({ results }) {
+import { ResultBadge, ScoreMeter } from "./ResultsDashboard.jsx";
 
-  console.log("RESULTS:", results);
-
+function ResultsTable({ results, onSelectFile }) {
   return (
-    <div style={{ marginTop: "20px" }}>
-      <h3>Similarity Results</h3>
-
-      <table border="1" style={{ width: "100%", marginTop: "10px", color: "black" }}>
-        <thead>
-          <tr>
-            <th>File</th>
-            <th>Most Similar</th>
-            <th>Similarity (%)</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {results.map((file, index) => (
-            <tr key={index}>
-              <td>{file.file}</td>
-              <td>{file.most_similar}</td>
-              <td>{Math.round(file.similarity)}%</td>
-            </tr>
-          ))}
-        </tbody>
-
-      </table>
-    </div>
+    <section className="results-table-card">
+      <div className="results-table-scroll">
+        <div className="results-data-table" style={{ "--results-columns": "1.55fr 0.9fr 1.55fr 1fr" }}>
+          <div className="results-table-header">
+            <span>FILE NAME</span>
+            <span>Status</span>
+            <span>Most similar</span>
+            <span>Similarity</span>
+          </div>
+          {results.map((file, index) => {
+            const highRisk = Number(file.similarity) > 70;
+            return (
+              <div className="results-table-row" key={index}>
+                <span>
+                  <button
+                    type="button"
+                    className="comparison-file-link"
+                    onClick={() => onSelectFile(file)}
+                  >
+                    {file.file}
+                  </button>
+                </span>
+                <span><ResultBadge tone={highRisk ? "danger" : "success"}>{highRisk ? "High Risk" : "Safe"}</ResultBadge></span>
+                <span>{file.most_similar}</span>
+                <span><ScoreMeter value={file.similarity} /></span>
+              </div>
+            );
+          })}
+          {results.length === 0 && <p className="results-empty-state">No similarity results are available.</p>}
+        </div>
+      </div>
+    </section>
   );
 }
 
 export default ResultsTable;
-//new results

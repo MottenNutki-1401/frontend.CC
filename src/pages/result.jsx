@@ -1,10 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import "../styles/result.css";
 import Header from "../components/header.jsx";
 import Sidebar from "../components/sidebar.jsx";
-import ResultsDashboard, { ResultBadge, ScoreMeter } from "../components/ResultsDashboard.jsx";
+import ResultsDashboard from "../components/ResultsDashboard.jsx";
+import ResultsTable from "../components/ResultsTable.jsx";
 import { exportSimilarityPDF } from "../utils/exportSimilarity";
 
 const getValidMatches = (matches) => (Array.isArray(matches) ? matches : []).filter((match) => {
@@ -32,7 +33,7 @@ function Passage({ text, range, type }) {
   );
 }
 
-function ComparisonViewer({ file, onClose }) {
+function ComparisonViewer({ file, onClose, viewerRef }) {
   const matches = getValidMatches(file.matches);
   const [currentIndex, setCurrentIndex] = useState(0);
   const match = matches[currentIndex];
@@ -40,7 +41,7 @@ function ComparisonViewer({ file, onClose }) {
   const matchedText = file.most_similar_original_text ?? file.most_similar_text;
 
   return (
-    <section className="comparison-viewer" aria-label="Document comparison">
+    <section ref={viewerRef} className="comparison-viewer" aria-label="Document comparison">
       <div className="comparison-viewer-heading">
         <div><p>DOCUMENT COMPARISON</p><h2>{file.file} <span>and</span> {file.most_similar}</h2></div>
         <button type="button" className="comparison-close" onClick={onClose}>Close</button>
@@ -68,9 +69,16 @@ function ComparisonViewer({ file, onClose }) {
 function Result() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const viewerRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
   const resultData = location.state;
+
+  useEffect(() => {
+    if (selectedFile) {
+      viewerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [selectedFile]);
 
   if (!resultData) {
     return <div><h2>No results found</h2><button onClick={() => navigate("/")}>Go Back</button></div>;
@@ -95,26 +103,8 @@ function Result() {
             { label: "Average similarity", value: `${averageSimilarity}%`, detail: "Across all documents", tone: averageSimilarity > 70 ? "danger" : "warning" },
           ]}
         >
-          <section className="results-table-card">
-            <div className="results-table-scroll">
-              <div className="results-data-table" style={{ "--results-columns": "1.55fr 0.9fr 1.55fr 1fr" }}>
-                <div className="results-table-header"><span>File name</span><span>Status</span><span>Most similar</span><span>Similarity</span></div>
-                {files.map((file, index) => {
-                  const highRisk = Number(file.similarity) > 70;
-                  return (
-                    <div className="results-table-row" key={index}>
-                      <span><button type="button" className="comparison-file-link" onClick={() => setSelectedFile(file)}>{file.file}</button></span>
-                      <span><ResultBadge tone={highRisk ? "danger" : "success"}>{highRisk ? "High Risk" : "Safe"}</ResultBadge></span>
-                      <span>{file.most_similar}</span>
-                      <span><ScoreMeter value={file.similarity} /></span>
-                    </div>
-                  );
-                })}
-                {files.length === 0 && <p className="results-empty-state">No similarity results are available.</p>}
-              </div>
-            </div>
-          </section>
-          {selectedFile && <ComparisonViewer key={`${selectedFile.file}-${selectedFile.most_similar}`} file={selectedFile} onClose={() => setSelectedFile(null)} />}
+          <ResultsTable results={files} onSelectFile={setSelectedFile} />
+          {selectedFile && <ComparisonViewer key={`${selectedFile.file}-${selectedFile.most_similar}`} file={selectedFile} onClose={() => setSelectedFile(null)} viewerRef={viewerRef} />}
         </ResultsDashboard>
       </main>
     </div>
