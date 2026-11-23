@@ -11,7 +11,7 @@ import { exportSimilarityPDF } from "../utils/exportSimilarity";
 const getValidMatches = (matches) => (Array.isArray(matches) ? matches : []).filter((match) => {
   const validRange = (range) => range && Number.isInteger(range.start) && Number.isInteger(range.end)
     && range.start >= 0 && range.end > range.start && typeof range.text === "string";
-  return (match.type === "exact" || match.type === "near_exact")
+  return (match.type === "exact" || match.type === "near_exact" || match.type === "paraphrase")
     && validRange(match.source) && validRange(match.matched);
 });
 
@@ -44,7 +44,7 @@ function Passage({ text, matches, side, currentIndex, selectedRef }) {
       {segments.map(({ start, end, match }, index) => match ? (
         <mark
           key={`${start}-${end}-${match.matchIndex}`}
-          ref={match.matchIndex === currentIndex ? selectedRef : null}
+          ref={match.matchIndex === currentIndex && start === match.range.start ? selectedRef : null}
           className={`comparison-highlight comparison-highlight--${match.type}${match.matchIndex === currentIndex ? " comparison-highlight--selected" : ""}`}
         >{text.slice(start, end)}</mark>
       ) : <span key={`text-${start}-${end}-${index}`}>{text.slice(start, end)}</span>)}
@@ -55,6 +55,7 @@ function Passage({ text, matches, side, currentIndex, selectedRef }) {
 function ComparisonViewer({ file, onClose, viewerRef }) {
   const matches = getValidMatches(file.matches);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const currentMatch = matches[currentIndex];
   const sourceText = typeof file.original_text === "string" ? file.original_text : "";
   const matchedText = typeof file.matched_text === "string" ? file.matched_text : "";
   const sourceMatchRef = useRef(null);
@@ -72,13 +73,19 @@ function ComparisonViewer({ file, onClose, viewerRef }) {
         <button type="button" className="comparison-close" onClick={onClose}>Close</button>
       </div>
       <div className="comparison-navigation">
-        <span>{matches.length ? `Match ${currentIndex + 1} of ${matches.length}` : "0 matches"}</span>
+        <div className="comparison-match-info">
+          <span>{matches.length ? `Match ${currentIndex + 1} of ${matches.length}` : "0 matches"}</span>
+          {currentMatch && <span className="comparison-match-type">{currentMatch.type === "near_exact" ? "Near-exact Match" : `${currentMatch.type[0].toUpperCase()}${currentMatch.type.slice(1)} Match`}</span>}
+          {currentMatch?.type === "paraphrase" && currentMatch.similarity !== null && currentMatch.similarity !== undefined && currentMatch.similarity !== "" && Number.isFinite(Number(currentMatch.similarity)) && (
+            <span className="comparison-semantic-score">Semantic Similarity: {Number(currentMatch.similarity) <= 1 ? `${(Number(currentMatch.similarity) * 100).toFixed(0)}%` : `${Number(currentMatch.similarity).toFixed(0)}%`}</span>
+          )}
+        </div>
         <div>
           <button type="button" onClick={() => setCurrentIndex((currentIndex - 1 + matches.length) % matches.length)} disabled={!matches.length || currentIndex === 0}>Previous</button>
           <button type="button" onClick={() => setCurrentIndex((currentIndex + 1) % matches.length)} disabled={!matches.length || currentIndex === matches.length - 1}>Next</button>
         </div>
       </div>
-      <p className="comparison-legend"><span className="comparison-highlight comparison-highlight--exact">Exact match</span><span className="comparison-highlight comparison-highlight--near_exact">Near-exact match</span></p>
+      <p className="comparison-legend"><span className="comparison-highlight comparison-highlight--exact">Exact match</span><span className="comparison-highlight comparison-highlight--near_exact">Near-exact match</span><span className="comparison-highlight comparison-highlight--paraphrase">Paraphrased match</span></p>
       {!matches.length && <p className="comparison-no-matches">No eligible matching passages were returned for this document pair.</p>}
       <div className="comparison-columns">
         <article><h3>{file.file}</h3><Passage text={sourceText} matches={matches} side="source" currentIndex={currentIndex} selectedRef={sourceMatchRef} /></article>
