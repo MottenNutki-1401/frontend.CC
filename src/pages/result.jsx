@@ -109,6 +109,16 @@ function Result() {
     }
   }, [selectedFile]);
 
+  useEffect(() => {
+    if (Array.isArray(resultData?.files)) {
+      try {
+        sessionStorage.setItem("copycatch-similarity-results", JSON.stringify(resultData.files));
+      } catch {
+        // Keep the current results page usable if browser storage is unavailable.
+      }
+    }
+  }, [resultData]);
+
   if (!resultData) {
     return <div><h2>No results found</h2><button onClick={() => navigate("/")}>Go Back</button></div>;
   }

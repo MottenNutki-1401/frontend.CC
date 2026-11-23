@@ -70,6 +70,9 @@
 }
 
 .sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   width: 100%;
   padding: 10px 12px;
   border: none;
@@ -83,6 +86,8 @@
   text-align: left;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
+
+.sidebar-nav-icon { width: 17px; height: 17px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }
 
 .sidebar-nav-item:hover {
   background: #fff9e7;

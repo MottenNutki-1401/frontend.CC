@@ -3,8 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import "../styles/sidebar.css";
 
-import File from "./file.jsx";
-
 import egg from "../assets/egg.svg";
 
 import { supabase }
@@ -66,6 +64,7 @@ function Sidebar({ isOpen, closeSidebar }) {
     { label: "Grammar Checker", path: "/grammar" },
     { label: "Spelling Checker", path: "/spelling" },
     { label: "Automated Grading", path: "/grading" },
+    { label: "Feedback Reports", path: "/feedback-reports" },
   ];
 
   return (
@@ -102,8 +101,9 @@ function Sidebar({ isOpen, closeSidebar }) {
             <button
               className={`sidebar-nav-item ${location.pathname === path ? "active" : ""}`}
               key={path}
-              onClick={() => navigate(path)}
+              onClick={() => navigate(path, path === "/feedback-reports" ? { state: location.state } : undefined)}
             >
+              {label === "Feedback Reports" && <svg className="sidebar-nav-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.75h6l4 4v10.5H5z" /><path d="M11 2.75v4h4M7.25 14.75v-2.5M10 14.75v-5M12.75 14.75v-3.5" /></svg>}
               {label}
             </button>
           ))}
