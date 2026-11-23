@@ -19,6 +19,7 @@
 .comparison-highlight { padding: 0 .1em; border-radius: 3px; white-space: pre-wrap; }
 .comparison-highlight--exact { background: #c9efd5; color: #174f2d; }
 .comparison-highlight--near_exact { background: #ffedaa; color: #634900; }
+.comparison-highlight--selected { outline: 2px solid currentColor; box-shadow: 0 0 0 3px rgba(255, 199, 39, 0.28); }
 .comparison-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 16px 20px 20px; }
 .comparison-columns article { min-width: 0; overflow: hidden; border: 1px solid #ece7da; border-radius: 11px; background: #fff; }
 .comparison-columns h3 { margin: 0; padding: 12px 14px; border-bottom: 1px solid #ece7da; background: #faf9f5; color: #353535; font-size: .85rem; overflow-wrap: anywhere; }

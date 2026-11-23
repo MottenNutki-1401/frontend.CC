@@ -15,20 +15,39 @@ const getValidMatches = (matches) => (Array.isArray(matches) ? matches : []).fil
     && validRange(match.source) && validRange(match.matched);
 });
 
-function Passage({ text, range, type }) {
-  if (typeof text !== "string" || !range || range.end > text.length || text.slice(range.start, range.end) !== range.text) {
-    return (
-      <div className="comparison-document-text">
-        {typeof text === "string" && text ? <pre>{text}</pre> : <mark className={`comparison-highlight comparison-highlight--${type}`}>{range?.text || "Passage text is unavailable."}</mark>}
-        <small>Showing the matched passage returned by the API; full document text is not included in this result.</small>
-      </div>
-    );
+function Passage({ text, matches, side, currentIndex, selectedRef }) {
+  const ranges = matches.map((match, matchIndex) => ({
+    range: match[side], type: match.type, matchIndex,
+  })).filter(({ range }) => range.start < text.length && range.end <= text.length)
+    .sort((a, b) => a.range.start - b.range.start || a.range.end - b.range.end);
+
+  // Non-overlapping segments keep each source character rendered exactly once.
+  // Prefer the selected range when backend ranges overlap.
+  const segments = [];
+  let cursor = 0;
+  while (cursor < text.length) {
+    const selected = ranges.find(({ range, matchIndex }) => matchIndex === currentIndex && range.start <= cursor && range.end > cursor);
+    const active = selected || ranges.find(({ range }) => range.start <= cursor && range.end > cursor);
+    if (active) {
+      const end = Math.min(active.range.end, ...ranges.filter(({ range, matchIndex }) => matchIndex !== active.matchIndex && range.start > cursor).map(({ range }) => range.start), text.length);
+      segments.push({ start: cursor, end, match: active });
+      cursor = end;
+    } else {
+      const nextStart = ranges.find(({ range }) => range.start > cursor)?.range.start ?? text.length;
+      segments.push({ start: cursor, end: nextStart, match: null });
+      cursor = nextStart;
+    }
   }
+
   return (
     <pre className="comparison-document-text">
-      {text.slice(0, range.start)}
-      <mark className={`comparison-highlight comparison-highlight--${type}`}>{text.slice(range.start, range.end)}</mark>
-      {text.slice(range.end)}
+      {segments.map(({ start, end, match }, index) => match ? (
+        <mark
+          key={`${start}-${end}-${match.matchIndex}`}
+          ref={match.matchIndex === currentIndex ? selectedRef : null}
+          className={`comparison-highlight comparison-highlight--${match.type}${match.matchIndex === currentIndex ? " comparison-highlight--selected" : ""}`}
+        >{text.slice(start, end)}</mark>
+      ) : <span key={`text-${start}-${end}-${index}`}>{text.slice(start, end)}</span>)}
     </pre>
   );
 }
@@ -36,9 +55,15 @@ function Passage({ text, range, type }) {
 function ComparisonViewer({ file, onClose, viewerRef }) {
   const matches = getValidMatches(file.matches);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const match = matches[currentIndex];
-  const sourceText = file.original_text ?? file.text;
-  const matchedText = file.most_similar_original_text ?? file.most_similar_text;
+  const sourceText = typeof file.original_text === "string" ? file.original_text : "";
+  const matchedText = typeof file.matched_text === "string" ? file.matched_text : "";
+  const sourceMatchRef = useRef(null);
+  const matchedMatchRef = useRef(null);
+
+  useEffect(() => {
+    sourceMatchRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    matchedMatchRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [currentIndex]);
 
   return (
     <section ref={viewerRef} className="comparison-viewer" aria-label="Document comparison">
@@ -53,15 +78,12 @@ function ComparisonViewer({ file, onClose, viewerRef }) {
           <button type="button" onClick={() => setCurrentIndex((currentIndex + 1) % matches.length)} disabled={!matches.length || currentIndex === matches.length - 1}>Next</button>
         </div>
       </div>
-      {!matches.length ? <p className="comparison-no-matches">No eligible matching passages were returned for this document pair.</p> : (
-        <>
-          <p className="comparison-legend"><span className="comparison-highlight comparison-highlight--exact">Exact match</span><span className="comparison-highlight comparison-highlight--near_exact">Near-exact match</span></p>
-          <div className="comparison-columns">
-            <article><h3>{file.file}</h3><Passage text={sourceText} range={match.source} type={match.type} /></article>
-            <article><h3>{file.most_similar}</h3><Passage text={matchedText} range={match.matched} type={match.type} /></article>
-          </div>
-        </>
-      )}
+      <p className="comparison-legend"><span className="comparison-highlight comparison-highlight--exact">Exact match</span><span className="comparison-highlight comparison-highlight--near_exact">Near-exact match</span></p>
+      {!matches.length && <p className="comparison-no-matches">No eligible matching passages were returned for this document pair.</p>}
+      <div className="comparison-columns">
+        <article><h3>{file.file}</h3><Passage text={sourceText} matches={matches} side="source" currentIndex={currentIndex} selectedRef={sourceMatchRef} /></article>
+        <article><h3>{file.most_similar}</h3><Passage text={matchedText} matches={matches} side="matched" currentIndex={currentIndex} selectedRef={matchedMatchRef} /></article>
+      </div>
     </section>
   );
 }
