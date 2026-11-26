@@ -31,6 +31,23 @@ const getRisk = (file) => {
 
 const getFileName = (file, index) => file.file || file.filename || `Document ${index + 1}`;
 
+const getFriendlyError = (error) => {
+  const message = typeof error === "string" ? error : String(error?.message || "");
+  const status = Number(error?.status);
+  const normalized = message.toLowerCase();
+
+  if (error instanceof TypeError || /failed to fetch|network|connection|load failed/.test(normalized)) {
+    return "Connection interrupted. Please check your connection and try again.";
+  }
+  if (status === 429 || status >= 500 || /temporarily unavailable|service unavailable|rate limit|timed out|timeout/.test(normalized)) {
+    return "The feedback service is temporarily unavailable. Please try again later.";
+  }
+  if (status === 400 || status === 422 || /invalid document|document content|could not be processed|unprocessable/.test(normalized)) {
+    return "Some documents couldn't be processed. Please review the affected submissions.";
+  }
+  return "We couldn't generate the feedback report. Please try again.";
+};
+
 function FeedbackReports() {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -73,10 +90,10 @@ function FeedbackReports() {
         const nextJob = await getFeedbackReportJob(job.id);
         if (active) {
           setJob(nextJob);
-          setError(nextJob.status === "failed" ? (nextJob.error || "Report generation failed.") : "");
+          setError(nextJob.status === "failed" ? getFriendlyError(nextJob.error) : "");
         }
       } catch (pollError) {
-        if (active) setError(`Could not refresh report progress: ${pollError.message}`);
+        if (active) setError(getFriendlyError(pollError));
       } finally {
         polling = false;
       }
@@ -118,7 +135,7 @@ function FeedbackReports() {
       setSelectedPreview("");
       setJob({ id: started.job_id, status: started.status || "queued", progress: { completed: 0, total: payload.texts.length }, usage: {}, artifacts: null });
     } catch (startError) {
-      setError(startError.message || "Could not start report generation. Check that the backend is available.");
+      setError(getFriendlyError(startError));
     } finally {
       submittingRef.current = false;
       setIsStarting(false);
@@ -140,7 +157,7 @@ function FeedbackReports() {
       link.remove();
       window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
     } catch (downloadError) {
-      setError(downloadError.message || "The report archive could not be downloaded.");
+      setError(getFriendlyError(downloadError));
     } finally {
       setIsDownloading(false);
     }

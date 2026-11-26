@@ -11,7 +11,9 @@ const readApiResponse = async (response) => {
     } catch {
       // Keep the status-based message when the server did not return JSON.
     }
-    throw new Error(message);
+    const error = new Error(message);
+    error.status = response.status;
+    throw error;
   }
   return response;
 };
