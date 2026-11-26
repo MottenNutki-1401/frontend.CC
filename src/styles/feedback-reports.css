@@ -19,6 +19,9 @@
 .feedback-assignment-input { width: min(100%, 520px); min-height: 42px; box-sizing: border-box; padding: 10px 12px; border: 1px solid #ded8c9; border-radius: 8px; background: #fff; color: #333; font: inherit; }
 .feedback-assignment-input:focus { outline: 3px solid rgba(255, 199, 39, .24); border-color: #d2a313; }
 .feedback-document-table-wrap { margin-top: 17px; overflow: auto; border: 1px solid #eee9dd; border-radius: 10px; }
+.feedback-selection-controls { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+.feedback-selection-controls button { min-height: 32px; padding: 6px 10px; border: 1px solid #e8dfc5; border-radius: 7px; background: #fffdf7; color: #66501a; cursor: pointer; font: inherit; font-size: .74rem; font-weight: 700; }
+.feedback-selection-controls button:hover { border-color: #d9b646; background: #fff6d9; }
 .feedback-document-table { width: 100%; border-collapse: collapse; text-align: left; font-size: .84rem; }
 .feedback-document-table th { padding: 12px 14px; background: #fff8df; color: #705406; font-size: .7rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
 .feedback-document-table td { padding: 12px 14px; border-top: 1px solid #f0ede4; color: #4b4b4b; }

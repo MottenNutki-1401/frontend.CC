@@ -53,6 +53,8 @@ function FeedbackReports() {
   const progressPercent = total ? Math.min(100, Math.round((completed / total) * 100)) : 0;
   const failedCount = job?.status === "failed" ? Math.max(0, total - completed) : 0;
   const completedCount = job?.status === "completed" ? total : completed;
+  const pendingCount = Math.max(0, total - completedCount - failedCount);
+  const displayStatus = job?.status === "completed" ? "Completed" : job?.status === "failed" ? "Failed" : "Processing";
 
   const counts = useMemo(() => eligibleFiles.reduce((result, { file }) => {
     const risk = getRisk(file);
@@ -94,6 +96,10 @@ function FeedbackReports() {
       else next.add(index);
       return next;
     });
+  };
+
+  const selectMatching = (predicate) => {
+    setSelectedIndexes(new Set(eligibleFiles.filter(({ file }) => predicate(file)).map(({ index }) => index)));
   };
 
   const handleGenerate = async () => {
@@ -165,9 +171,16 @@ function FeedbackReports() {
         </section>
 
         <section className="feedback-panel feedback-selection-panel">
-          <div className="feedback-section-heading"><div><p className="feedback-eyebrow">REPORT SETUP</p><h2>Select comparison results</h2><p>Choose 2–30 documents with extracted text. The backend computes report similarity from these documents.</p></div><span className="feedback-selected-count">{selectedFiles.length} selected</span></div>
+          <div className="feedback-section-heading"><div><p className="feedback-eyebrow">REPORT SETUP</p><h2>Select comparison results</h2><p>Choose 2–30 documents with extracted text. The backend computes report similarity from these documents.</p></div><span className="feedback-selected-count">{selectedFiles.length} of {eligibleFiles.length} documents selected</span></div>
           <label className="feedback-assignment-label" htmlFor="feedback-assignment">Assignment title</label>
           <input id="feedback-assignment" className="feedback-assignment-input" value={assignmentTitle} onChange={(event) => setAssignmentTitle(event.target.value)} maxLength={120} />
+          <div className="feedback-selection-controls" role="group" aria-label="Select documents by risk">
+            <button type="button" onClick={() => selectMatching(() => true)}>Select All</button>
+            <button type="button" onClick={() => selectMatching((file) => getRisk(file) === "High Risk")}>Select High Risk</button>
+            <button type="button" onClick={() => selectMatching((file) => getRisk(file) === "Moderate")}>Select Moderate</button>
+            <button type="button" onClick={() => selectMatching((file) => getRisk(file) === "Safe")}>Select Safe</button>
+            <button type="button" onClick={() => setSelectedIndexes(new Set())}>Clear Selection</button>
+          </div>
           <div className="feedback-document-table-wrap">
             <table className="feedback-document-table">
               <thead><tr><th scope="col">Select</th><th scope="col">Document</th><th scope="col">Risk classification</th><th scope="col">Similarity</th></tr></thead>
@@ -194,12 +207,12 @@ function FeedbackReports() {
         </section>
 
         {(job || error) && <section className="feedback-panel feedback-job-panel" aria-live="polite">
-          <div className="feedback-section-heading"><div><p className="feedback-eyebrow">GENERATION STATUS</p><h2>{job?.status === "completed" ? "Reports ready" : job?.status === "failed" ? "Generation failed" : "Generating reports"}</h2></div><span className={`feedback-job-status feedback-job-status--${job?.status || "error"}`}>{job?.status || "error"}</span></div>
+          <div className="feedback-section-heading"><div><p className="feedback-eyebrow">GENERATION STATUS</p><h2>{job?.status === "completed" ? "Reports ready" : job?.status === "failed" ? "Generation failed" : "Generating reports"}</h2></div><span className={`feedback-job-status feedback-job-status--${job?.status || "error"}`}>{job ? displayStatus : "Failed"}</span></div>
           {error && <p className="feedback-error" role="alert">{error}</p>}
           {job && <>
-            <div className="feedback-progress-label"><span>{completed} of {total} student reports complete</span><strong>{progressPercent}%</strong></div>
+            <div className="feedback-progress-label"><span>{total} documents selected · {completedCount} of {total} reports completed</span><strong>{progressPercent}%</strong></div>
             <div className="feedback-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax={total || 1} aria-valuenow={completed}><span style={{ width: `${progressPercent}%` }} /></div>
-            <div className="feedback-job-metrics"><div><span>Completed</span><strong>{completedCount}</strong></div><div><span>Failed</span><strong>{failedCount}</strong></div><div><span>Total tokens</span><strong>{Number(job.usage?.total_tokens || 0).toLocaleString()}</strong></div><div><span>Cache hits</span><strong>{Number(job.usage?.cache_hits || 0).toLocaleString()}</strong></div></div>
+            <div className="feedback-job-metrics"><div><span>Total selected documents</span><strong>{total}</strong></div><div><span>Completed reports</span><strong>{completedCount}</strong></div><div><span>Failed reports</span><strong>{failedCount}</strong></div><div><span>Pending reports</span><strong>{pendingCount}</strong></div></div>
             {job.status === "completed" && <button className="feedback-primary-button feedback-download-button" type="button" onClick={handleDownload} disabled={isDownloading}>{isDownloading ? "Preparing download…" : "Download All Reports (.ZIP)"}</button>}
           </>}
         </section>}
